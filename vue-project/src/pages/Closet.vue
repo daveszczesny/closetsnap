@@ -1,12 +1,5 @@
 <template>
-    <nav>
-        <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/Closet" class="nav-link">My Closet</router-link>
-        <router-link to="/About" class="nav-link">About</router-link>
-        <router-link v-if="auth == false" to="/Login" class="nav-link">Log in</router-link>
-        <router-link v-if="auth == true" @click="authLogOut" to="/" class="nav-link">Log out</router-link>
 
-    </nav>
 </template>
 <script lang="ts">
 
@@ -18,20 +11,22 @@ export default {
     data() {
         return {
             auth: false,
-            name: ""
+            name: "",
+            sideBarDisplay: false,
         }
     },
     mounted() {
         getAuth().onAuthStateChanged((user) => {
-            if(user){
+            if (user) {
                 this.auth = true;
                 getData("name").then((name) => {
                     this.name = name;
                 })
-            }else{
+            } else {
                 this.auth = false;
             }
         })
+
     },
 
     methods: {
@@ -42,4 +37,6 @@ export default {
 }
 
 </script>
-<style></style>
+<style>
+
+</style>

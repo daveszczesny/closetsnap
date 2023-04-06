@@ -7,8 +7,28 @@
       <div class="logo">
         <img @click="goHome" class="img-responsive" src="./assets/logo.png">
       </div>
-     
+
+
+
     </header>
+
+
+    <button class="sidebarButton" @click="toggleLocalSideBar">☰</button>
+
+    <div class="wrapper">
+      <nav v-if="sideBarDisplay == true" class="sidebar">
+        <router-link to="/" class="nav-link">Home</router-link>
+        <router-link to="Closet" class="nav-link">My Closet</router-link>
+        <router-link to="/About" class="nav-link">About</router-link>
+        <router-link v-if="auth == false" to="/Login" class="nav-link">Log in</router-link>
+        <router-link v-if="auth == true" @click="authLogOut" to="/" class="nav-link">Log out</router-link>
+        <hr>
+        <p class="nav-link">Clothes</p>
+
+      </nav>
+
+    </div>
+
   </div>
 
   <router-view></router-view>
@@ -18,25 +38,46 @@
 <script lang="ts">
 
 import { getAuth } from '@firebase/auth';
+import { logOut } from '@/scripts/auth_signout';
+import { getData } from '@/scripts/db_read_user';
 
 export default {
   data() {
     return {
-      logState : ""
+      logState: "",
+      sideBarDisplay: false,
+      auth: false,
+      name: "" as string,
     }
   },
   mounted() {
-    if (getAuth().currentUser == null) {
-      this.logState = "Log in"
-    }else{
-      this.logState = "Log out"
-    }
+
+    this.sideBarDisplay = false;
+
+    getAuth().onAuthStateChanged((user) => {
+      if (user) {
+        this.auth = true;
+        getData("name").then((name) => {
+          this.name = name;
+        })
+      } else {
+        this.auth = false;
+      }
+    })
   },
 
-  methods:{
-    goHome(){
+  methods: {
+    goHome() {
       //@ts-ignore
       this.$router.push('/');
+    },
+
+    authLogOut() {
+      logOut();
+    },
+
+    toggleLocalSideBar() {
+      this.sideBarDisplay = !this.sideBarDisplay;
     }
   }
 
@@ -44,7 +85,53 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
+.sidebarButton {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: xx-large;
+
+  float: right;
+
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80%;
+  height: calc(100% - 15vh);
+  background-color: var(--main-primary-color);
+  margin-top: 15vh;
+}
+
+.sidebar .nav-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  text-decoration: none;
+  -webkit-text-fill-color: black;
+  font-size: x-large;
+
+  margin-left: 5vh;
+  margin-top: 3vh;
+
+}
+
+
+.sidebar.collapsed {
+  width: 0;
+}
+
 @media (min-width: 1500px) {
 
   header {
@@ -55,24 +142,6 @@ export default {
     background-color: #FFFFFF;
   }
 
-
-  nav {
-    display: flex;
-    background-color: #FFFFFF;
-    align-items: center;
-    justify-content: space-between;
-    margin-right: 30%;
-  }
-
-  .nav-link {
-    margin-right: 10vh;
-    display: flex;
-    list-style: none;
-    white-space: nowrap;
-    text-decoration: none;
-    color: var(--main-secondary-color);
-    font-weight: bold;
-  }
 }
 
 
@@ -94,21 +163,6 @@ export default {
   .img-responsive {
     max-width: max-content;
     height: auto;
-  }
-
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .nav-link {
-    margin: 1vh 2vh;
-    white-space: nowrap;
-    list-style: none;
-    text-decoration: none;
-    color: var(--main-secondary-color);
-    font-weight: bold;
   }
 }
 </style>
