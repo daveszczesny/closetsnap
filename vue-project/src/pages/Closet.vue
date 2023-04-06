@@ -1,6 +1,4 @@
 <template>
-
-
     <!-- <div @click="addToCloset" id="circle" class="circle">
         <label for="file-upload" class="file-upload">
             <input id="file-upload" type="file" name="file">
@@ -12,18 +10,16 @@
     </div>
 
     <div v-if="toggleAddCategoryScreen" class="categorySlection-wrapper">
-        <button>Add Category</button>
-        <button>Select Category</button>
+        <button @click="addImage">Add Image</button>
+        <input id="img" type="file">
     </div>
-
-
 </template>
 <script lang="ts">
 
 import { getAuth } from '@firebase/auth';
 import { getData } from '@/scripts/db_read_user';
 import { logOut } from '@/scripts/auth_signout';
-import { getStorage } from '@firebase/storage';
+import { getStorage, ref, uploadBytes } from '@firebase/storage';
 
 export default {
     data() {
@@ -31,6 +27,7 @@ export default {
             auth: false,
             name: "",
             toggleAddCategoryScreen: false,
+            img_name: ""
         }
     },
     mounted() {
@@ -54,7 +51,7 @@ export default {
 
     methods: {
         authLogOut() {
-            logOut();
+            logOut(); // logs out the current user
         },
         checkValue() {
             const foo = document.getElementById("img") as HTMLInputElement;
@@ -63,18 +60,29 @@ export default {
         addToCloset() {
             console.log("Currently not able to add to closet")
         },
-        toggleAddToCategoryScreen(){
+        // toggles category screen
+        toggleAddToCategoryScreen() {
             this.toggleAddCategoryScreen = !this.toggleAddCategoryScreen;
+        },
+        // adds image user selected
+        addImage() {
+            if (getAuth().currentUser == null) return;
+            const storage = getStorage();
+            const foo = document.getElementById("img") as HTMLInputElement;
+            const file = foo.files?.[0] as File | null;
+            const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + file?.name);
+            uploadBytes(imageRef, file as Blob).then(snap => {
+                console.log("Uploaded");
+            })
         }
     }
 }
 
 </script>
 <style>
-
-.categorySlection-wrapper{
+.categorySlection-wrapper {
     padding: 5vh 5vh 100% 5vh;
-    background-color: #F44336;
+    background-color: var(--main-primary-color);
     margin: 5vh 2vh 0vh 2vh;
 }
 
@@ -103,7 +111,7 @@ export default {
     cursor: pointer;
 }
 
-input[type="file"] {
+/* input[type="file"] {
     display: none;
 }
 
@@ -117,13 +125,13 @@ label.file-upload::before {
     content: "+";
     font-size: 24px;
     font-weight: bold;
-}
+} */
 
 .plus {
-  color: #FFF;
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
-  user-select: none;
+    color: #FFF;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    user-select: none;
 }
 </style>
