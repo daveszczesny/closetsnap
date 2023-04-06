@@ -92,7 +92,7 @@ export default {
   padding: 0;
   cursor: pointer;
   font-size: xx-large;
-
+  user-select: none;
   float: right;
 
 }
