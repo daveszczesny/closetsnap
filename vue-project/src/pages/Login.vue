@@ -1,13 +1,7 @@
 <template>
-    <nav>
-        <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/Closet" class="nav-link">My Closet</router-link>
-        <router-link to="/About" class="nav-link">About</router-link>
-        <router-link v-if="auth == false" to="/Login" class="nav-link">Log in</router-link>
-        <router-link v-if="auth == true" @click="authLogOut" to="/" class="nav-link">Log out</router-link>
 
-    </nav>
-
+    <Sidebar />
+    
     <div class="form-container">
         <form onsubmit="return false;">
             <input v-model="fname" v-if="signInBoolean" type="text" placeholder="First name" required>
@@ -42,7 +36,16 @@ import { addUser } from '../scripts/db_add_user';
 import { logOut } from '../scripts/auth_signout'
 import { getAuth, signInWithPopup } from '@firebase/auth';
 
+
+// components
+
+import Sidebar from '@/components/Sidebar.vue';
+
 export default {
+
+    components: {
+        Sidebar,
+    },
 
     data() {
         return {

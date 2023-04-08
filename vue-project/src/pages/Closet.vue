@@ -1,9 +1,14 @@
 <template>
-    <!-- <div @click="addToCloset" id="circle" class="circle">
-        <label for="file-upload" class="file-upload">
-            <input id="file-upload" type="file" name="file">
-        </label>
-    </div> -->
+
+    <Sidebar />
+
+    <div v-if="!auth" class="login-info">
+        <h2>Log in to use My Closet</h2>
+    </div>
+
+    <div v-if="auth" class="login-info">
+        <h2>Your closet is currently empty</h2>
+    </div>
 
     <div class="circle">
         <div @click="toggleAddToCategoryScreen" class="plus">+</div>
@@ -21,7 +26,16 @@ import { getData } from '@/scripts/db_read_user';
 import { logOut } from '@/scripts/auth_signout';
 import { getStorage, ref, uploadBytes } from '@firebase/storage';
 
+// components
+
+import Sidebar from '@/components/Sidebar.vue';
+
 export default {
+
+    components: {
+        Sidebar,
+    },
+
     data() {
         return {
             auth: false,
@@ -73,13 +87,27 @@ export default {
             const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + file?.name);
             uploadBytes(imageRef, file as Blob).then(snap => {
                 console.log("Uploaded");
+            }).catch((e) => {
+                console.log(e); // upload failed
             })
-        }
+        },
+
     }
 }
 
 </script>
 <style>
+
+.login-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 50%;
+}
+.login-info h2 {
+    font-size: large;
+}
+
 .categorySlection-wrapper {
     padding: 5vh 5vh 100% 5vh;
     background-color: var(--main-primary-color);

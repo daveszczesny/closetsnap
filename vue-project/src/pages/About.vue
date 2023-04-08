@@ -1,4 +1,7 @@
 <template>
+
+    <Sidebar />
+
     <div class="about">
     <p>In to am attended desirous raptures declared diverted confined at. Collected instantly remaining up certainly to
         necessary as. Over walk dull into son boy door went new. At or happiness commanded daughters as. Is handsome an
@@ -57,7 +60,14 @@
 
 import { logOut } from '@/scripts/auth_signout';
 
+import Sidebar from '@/components/Sidebar.vue';
+
 export default {
+
+    components: {
+        Sidebar,
+    },
+
     data() {
         return {
             auth: false,

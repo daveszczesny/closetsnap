@@ -3,6 +3,8 @@
 
 
 <template>
+
+    <Sidebar />
     
     <div class="greet">
         <p v-if="auth == true">Welcome {{ name }}</p>
@@ -22,8 +24,16 @@
 import { getAuth } from '@firebase/auth';
 import { logOut } from '@/scripts/auth_signout';
 import { getData } from '@/scripts/db_read_user';
+
+// components
+
+import Sidebar from '@/components/Sidebar.vue';
+
 export default {
 
+    components: {
+        Sidebar
+    },
 
     data() {
         return {
