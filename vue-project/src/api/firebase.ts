@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app"
 import { getAuth } from 'firebase/auth'
 import { getStorage } from 'firebase/storage'
+import { getFunctions } from 'firebase/functions'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,10 +21,11 @@ const firebaseConfig: any = {
 const app: any = initializeApp(firebaseConfig);
 const auth: any = getAuth(app);
 const storage: any = getStorage(app);
+const functions: any = getFunctions(app);
 
 export {
   app,
   auth,
   storage,
-  
+  functions,
 }

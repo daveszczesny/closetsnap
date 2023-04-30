@@ -1,13 +1,11 @@
 <template>
-
     <Sidebar />
 
-    <div v-if="!auth" class="login-info">
-        <h2>Log in to use My Closet</h2>
-    </div>
 
-    <div v-if="auth" class="login-info">
-        <h2>Your closet is currently empty</h2>
+    <div class="image-container">
+    </div>
+    <div class="empty-image-container">
+
     </div>
 
     <div class="circle">
@@ -16,19 +14,24 @@
 
     <div v-if="toggleAddCategoryScreen" class="categorySlection-wrapper">
         <button @click="addImage">Add Image</button>
-        <input id="img" type="file">
+        <input id="img" type="file" accept=".png .jpg">
     </div>
+
 </template>
 <script lang="ts">
 
 import { getAuth } from '@firebase/auth';
 import { getData } from '@/scripts/db_read_user';
 import { logOut } from '@/scripts/auth_signout';
-import { getStorage, ref, uploadBytes } from '@firebase/storage';
+import { getFunctions, httpsCallable } from '@firebase/functions'
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from '@firebase/storage';
+
+import emptyCloset from '../assets/sad.png';
 
 // components
 
 import Sidebar from '@/components/Sidebar.vue';
+import { doc } from 'firebase/firestore';
 
 export default {
 
@@ -44,19 +47,64 @@ export default {
             img_name: ""
         }
     },
-    mounted() {
+    async mounted() {
         getAuth().onAuthStateChanged((user) => {
             if (user) {
                 this.auth = true;
+                console.log("Logged in")
                 getData("name").then((name) => {
                     this.name = name;
                 })
+
+
             } else {
+                console.log("Logged out")
                 this.auth = false;
             }
         })
 
-        // get categories from storage and show them here, as well as some photos
+
+        // create storage ref, and get ref to image folder
+        const storage = getStorage();
+        const folderRef = ref(storage, `users/${getAuth().currentUser?.email}/`);
+        let imgArr: any[] = [];
+
+        // loop through all images in folder, and push to array
+        listAll(folderRef)
+            .then(res => {
+                res.items.forEach((itemRef) => {
+                    imgArr.push(itemRef);
+                })
+
+                // for every image ref, get url and create img element
+                const imgDiv = document.querySelector('.image-container');
+                imgArr.forEach(f => {
+                    getDownloadURL(f)
+                        .then(url => {
+                            const imgElement = document.createElement('img');
+                            imgElement.setAttribute('src', url);
+                            imgDiv?.appendChild(imgElement);
+                        })
+                })
+                console.log(`Displaying... ${imgArr.length} images`)
+
+                if(imgArr.length <= 0){
+                    const emptyImgDiv = document.querySelector('.empty-image-container');
+                    const imgElement = document.createElement('img');
+                    const pElement = document.createElement('p');
+                    imgElement.src = emptyCloset;
+                    imgElement.setAttribute('style', 'width:300px')
+                    
+                    pElement.innerText = "Your closet seems kinda empty"
+                    
+                    emptyImgDiv?.appendChild(imgElement);
+                    emptyImgDiv?.append(pElement);
+
+
+                }
+
+            })
+
 
 
 
@@ -91,6 +139,14 @@ export default {
                 console.log(e); // upload failed
             })
         },
+        async showImages() {
+            const listFiles = await httpsCallable(getFunctions(), 'listFiles');
+            console.log(listFiles);
+        },
+
+        showImage(): string {
+            return "";
+        }
 
     }
 }
@@ -98,12 +154,28 @@ export default {
 </script>
 <style>
 
+.image-container {
+    display: flex;
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+
+    margin: 5vh 2vh 2vh 2vh;
+
+}
+
+.image-container>.item {
+    min-width: 100%;
+    scroll-snap-align: start;
+}
+
+
 .login-info {
     display: flex;
     flex-direction: row;
     justify-content: center;
     margin-top: 50%;
 }
+
 .login-info h2 {
     font-size: large;
 }
