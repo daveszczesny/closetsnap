@@ -3,19 +3,35 @@
         <img id="image-preview">
 
 
-        <div class="buttons">
-            <button id="uploadBtn" @click="uploadToBucket">Upload</button>
-            <label style="" for="image" class="custom-file-upload">
-                <p>Choose File</p>
-            </label>
-            <input type="file" id="image" accept="image/*" @change="onFileChange" />
+        <div class="bottom">
+            <div class="category-dropdown">
+                <select id="category">
+                    <option value="Tops">Tops</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Jeans">Jeans</option>
+                    <option value="Shirts">Shirts</option>
+                    <option value="Underwear">Underwear</option>
+                    <option value="Bras">Bras</option>
+                    <option value="Socks">Socks</option>
+
+                </select>
+            </div>
+            <div class="buttons">
+
+
+                <button id="uploadBtn" @click="uploadToBucket">Upload</button>
+                <label style="" for="image" class="custom-file-upload">
+                    <p>Choose File</p>
+                </label>
+                <input type="file" id="image" accept="image/*" @change="onFileChange" />
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { getAuth } from 'firebase/auth';
-import { getStorage, ref } from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 
 export default {
     data() {
@@ -45,13 +61,60 @@ export default {
 
         },
 
+        /*
+            Random String generator to generate random names for images uploaded
+        */
+        generateRandomString(length: number): string {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                result += chars.charAt(randomIndex);
+            }
+            return result;
+        },
+
+
         uploadToBucket() {
-            if(getAuth().currentUser == null) return;
+            if (getAuth().currentUser == null) {
+                console.log("Current User is not logged in ");
+                return;
+            };
             const storage = getStorage();
-            const image = document.getElementById('image-preview') as HTMLImageElement;
-            const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + image?.name);
-            
-            
+            const image = document.getElementById('image') as HTMLInputElement;
+            const option = document.getElementById('category') as HTMLSelectElement;
+            const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + option.value + "/"+this.generateRandomString(30));
+
+            const file = image?.files?.[0];
+            if (file) {
+                const uploadTask = uploadBytesResumable(imageRef, file);
+
+                uploadTask.on(
+                    "state_changed",
+                    snapshot => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log(progress);
+                        switch (snapshot.state) {
+                            case 'paused':
+                                console.log("Upload is paused");
+                                break;
+                            case 'running':
+                                console.log('Upload is running');
+                                break;
+                        }
+                    },
+                    error => {
+                        console.log(error)
+                    },
+                    () => {
+                        console.log('Upload Complete');
+                        getDownloadURL(imageRef).then(url => {
+                            console.log("File available at", url);
+
+                        })
+                    }
+                )
+            }
         }
     },
 }
@@ -66,17 +129,38 @@ export default {
     align-items: center;
 }
 
+
+.bottom {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    width: 95%;
+    margin: 6%;
+}
+
+.category-dropdown select {
+
+    display: flex;
+    justify-content: center;
+    width: 90%;
+    margin: 5%;
+    background-color: var(--main-neutral-color);
+    border-radius: 15px;
+
+    font-size: large;
+    text-align: center;
+
+}
+
 .buttons {
     display: flex;
     flex-direction: row;
-    position: fixed;
-    bottom: 0;
-    width: 90%;
+    /* position: fixed;
+    bottom: 0; */
 
-    margin: 4%;
+    
 
-    height: 6vh;
-   
 }
 
 button {
@@ -91,6 +175,8 @@ button {
     font-weight: 400;
 
     margin-right: 5%;
+
+    color: var(--text-color);
 }
 
 input[type="file"] {
@@ -108,6 +194,6 @@ input[type="file"] {
     text-align: center;
     font-size: medium;
     font-weight: 400;
-
+    color: var(--text-color);
 }
 </style>
