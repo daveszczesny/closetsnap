@@ -13,7 +13,13 @@
                     <option value="Underwear">Underwear</option>
                     <option value="Bras">Bras</option>
                     <option value="Socks">Socks</option>
-
+                    <option value="Dresses">Dresses</option>
+                    <option value="Shorts">Shorts</option>
+                    <option value="Skirts">Skirts</option>
+                    <option value="HoodiesSweatshirts">Hoodies & Sweatshirts</option>
+                    <option value="Jackets">Jackets & Coats</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Gym">Gym wear</option>
                 </select>
             </div>
             <div class="buttons">
