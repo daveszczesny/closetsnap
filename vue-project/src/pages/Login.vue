@@ -1,7 +1,6 @@
 <template>
-
     <Sidebar />
-    
+
     <div class="form-container">
         <form onsubmit="return false;">
             <input v-model="fname" v-if="signInBoolean" type="text" placeholder="First name" required>

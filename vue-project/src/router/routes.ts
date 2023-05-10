@@ -13,5 +13,6 @@ export default [
     {path: '/About', component: loadPage('About')},
     {path: '/Closet', component: loadPage('Closet')},
     {path: '/Login', component: loadPage('Login')},
+    {path: '/AddCloset', component: loadPage('AddCloset')},
 
 ]
