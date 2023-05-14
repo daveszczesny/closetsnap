@@ -20,6 +20,7 @@
                     <option value="Jackets">Jackets & Coats</option>
                     <option value="Shoes">Shoes</option>
                     <option value="Gym">Gym wear</option>
+                    <option value="Knitwear">Knitwear</option>
                 </select>
             </div>
             <div class="buttons">
