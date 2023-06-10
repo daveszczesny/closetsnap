@@ -1,105 +1,91 @@
-
-
-
-
 <template>
-
-    <Sidebar />
-    
-    <div class="greet">
-        <p v-if="auth == true">Welcome {{ name }}</p>
+    <div class="top_header">
+        <h1>From Wardrobe</h1>
+    </div>
+    <div class="h1_float_right">
+        <h1>to Web</h1>
     </div>
 
-    <div class="image-container">
-        <img class="item" src="../assets/image1.png">
-        <img class="item" src="../assets/image2.png">
-        <img class="item" src="../assets/image3.png">
-
+    <div class="main-image-container">
+        <img src="../assets/image_home_page1.png" />
     </div>
+
+    <div class="small_header">
+        <h1>Unleash the Potential of</h1>
+    </div>
+    <div class="big_header">
+        <h1>Your Style</h1>
+    </div>
+
+    <div style="display: flex; justify-content: center; margin-top: 3vh;">
+        <img src="../assets/separation_line.png" />
+    </div>
+
+    <div class="images">
+        <img src="../assets/image_home_page2.png" />
+        <img src="../assets/image_home_page3.png" />
+        <img src="../assets/image_home_page4.png" />
+    </div>
+
+
 
 </template>
 
+
+
 <script lang="ts">
 
-import { getAuth } from '@firebase/auth';
-import { logOut } from '@/scripts/auth_signout';
-import { getData } from '@/scripts/db_read_user';
-
-// components
-
-import Sidebar from '@/components/Sidebar.vue';
-
-export default {
-
-    components: {
-        Sidebar
-    },
-
-    data() {
-        return {
-            auth: false,
-            name: ""
-        }
-    },
-
-    mounted() {
-        
-        getAuth().onAuthStateChanged((user) => {
-            if(user){
-                this.auth = true;
-                getData("name").then((name) => {
-                    this.name = name;
-                })
-            }else{
-                this.auth = false;
-            }
-        })
-    },
-
-    methods: {
-        authLogOut() {
-            logOut();
-        }
-    }
-
-}
 
 </script>
 
 
 <style>
 
-.greet {
+.images {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4vh;
+}
+
+
+.images img:first-child {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.images img {
+    width: 100px;
+    height: 200px;
+    flex: 1;
+    margin-left: 10px;
+}
+
+.big_header {
     display: flex;
     justify-content: center;
 }
 
-.image-container {
-    display: flex;
-    overflow: auto;
-    scroll-snap-type: x mandatory;
-
-    margin: 5vh 2vh 2vh 2vh;
-
+.small_header {
+    margin-top: 3vh;
+    display:flex;
+    justify-content: center;
 }
 
-.image-container>.item {
-    min-width: 100%;
-    scroll-snap-align: start;
+.small_header h1{
+    font-size: 30px;
 }
 
-@media (max-width: 1500px) {
-    .logo {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 10px;
-    }
+.main-image-container img {
+    margin-top: 4vh;
+    width: 174px;
+    height: 263px;
+}
 
-    .img-responsive {
-        max-width: max-content;
-        height: auto;
-    }
+.top_header {
+    margin-top: 10vh;
+}
 
+.h1_float_right {
+    float: right;
 }
 </style>

@@ -1,28 +1,52 @@
 <template>
-    <Sidebar />
+    <div class="login-top-headers">
+        <div class="login-main-header-container">
+            <h1>Welcome Back</h1>
+        </div>
+        <div class="login-float-left-container">
+            <h1>Anonymous</h1>
+        </div>
+        <div class="login-float-right-container">
+            <h1>Person</h1>
+        </div>
+    </div>
 
-    <div class="form-container">
-        <form onsubmit="return false;">
-            <input v-model="fname" v-if="signInBoolean" type="text" placeholder="First name" required>
-            <input v-model="email" type="email" placeholder="exmaple@gmail.com" required>
-            <input v-model="password" type="password" placeholder="password" required>
-            <button class="form-button" @click="signin_email">{{ signInButtonMessage }}</button>
-        </form>
 
-        <div class="separator">or</div>
+    <div class="login-section">
 
-        <form>
-            <div class="email-container">
 
-                <label for="email" @click="signin_email">
-                    <span class="gmail-icon"></span>
-                </label>
+        <div class="login-email-section">
+            <div class="login-circle">
+                <img src="../assets/user.png" alt="user" />
             </div>
-        </form>
 
+            <div class="login-email-input">
+                <input
+                type="email"
+                placeholder="email"
+                v-model="email_length"
+                :style="{fontSize: email_length.length > 25 ? 'small' : email_length.length > 22 ? 'medium' : email_length.length > 15 ? 'large' : 'x-large',
+                    paddingLeft: email_length.length > 18 ? '40px' : 'inherit'}">
+            </div>
 
+        </div>
 
-        <button class="create-account" @click="switchCreation">{{ createAccountMessage }}</button>
+        <div class="login-password-section">
+            <div class="login-circle">
+                <img src="../assets/password.png" alt="user" />
+            </div>
+
+            <div class="login-email-input">
+                <input
+                type="password"
+                placeholder="password"
+                v-model="password_length"
+                :style="{fontSize: password_length.length > 25 ? 'small' : password_length.length > 22 ? 'medium' : password_length.length > 15 ? 'large' : 'x-large',
+                    paddingLeft: password_length.length > 18 ? '40px' : 'inherit'}">
+            </div>
+
+        </div>
+
 
     </div>
 </template>
@@ -38,13 +62,8 @@ import { getAuth, signInWithPopup } from '@firebase/auth';
 
 // components
 
-import Sidebar from '@/components/Sidebar.vue';
 
 export default {
-
-    components: {
-        Sidebar,
-    },
 
     data() {
         return {
@@ -54,7 +73,11 @@ export default {
             signInBoolean: false,
             signInButtonMessage: "Sign in",
             createAccountMessage: "Create account",
-            auth: false
+            auth: false,
+
+
+            email_length: '',
+            password_length: '',
         }
     },
 
@@ -108,195 +131,88 @@ export default {
 
 
 <style>
-.create-account {
-    background-color: transparent;
+.login-top-headers {
+    display: flex;
+    margin-top: 4vh;
+    flex-direction: column;
+}
+
+.login-top-headers h1 {
+    line-height: 0;
+}
+
+
+.login-main-header-container {
+    display: flex;
+    justify-content: center;
+}
+
+.login-float-left-container {
+    display: flex;
+    margin-right: auto;
+    margin-left: 2vh;
+}
+
+.login-float-right-container {
+    display: flex;
+    margin-left: auto;
+    margin-right: 2vh;
+}
+
+.login-email-section{
+    position: relative;
+    margin-left: 5vh;
+    margin-top: 12vh;
+}
+
+.login-password-section{
+    position: relative;
+    margin-left: 5vh;
+    margin-top: 8vh;
+}
+
+.login-circle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+
+    width: 87px;
+    height: 87px;
+    background-color: var(--overlay-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    margin-right: auto;
+    margin-left: 1vh;
+
+}
+
+.login-circle img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.login-email-input{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 306px;
+    height: 64px;
+    margin-top: 4vh;
+}
+
+.login-email-input input{
+    border-radius: 15px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    outline: none;
     border: none;
 
-    margin-top: 2vh;
-    margin-bottom: 1vh;
-    margin-left: 1vh;
 }
 
-@media (min-width: 1505px) {
-
-    .email-container {
-        border-color: #FFFFFF;
-        padding: .5vh 60% .5vh 1vh;
-        border-radius: 5px;
-    }
-
-    .gmail-icon {
-        display: inline-flex;
-        width: 8vh;
-        height: 8vh;
-        margin-right: 0.5vh;
-        background-image: url(../assets/gmailicon-removebg-preview.png);
-        background-size: contain;
-        background-repeat: no-repeat;
-
-    }
-
-    .gmail-icon::after {
-        content: "Gmail";
-        margin-left: 10vh;
-        margin-top: 0.8vh;
-    }
-
-    .form-container {
-        background-color: var(--main-primary-color);
-        margin-top: 5%;
-        border-radius: 15px;
-        margin-left: 25%;
-        margin-right: 25%;
-        /* padding-bottom: 5vh; */
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 75px 25px 5px 25px;
-    }
-
-    input,
-    .form-button {
-        background-color: #FFFFFF;
-        border-color: #FFFFFF;
-        border: 0;
-        border-radius: 5px;
-
-        width: 90%;
-        height: 5vh;
-        margin: 1%;
-        text-align: center;
-
-        font-size: x-large;
-
-    }
-
-    .form-button {
-        margin-top: 1.5vh;
-        background-color: var(--main-secondary-color);
-        border-radius: 15px;
-    }
-
-
-    .separator {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        padding-top: 4vh;
-        font-size: x-large;
-    }
-
-    .separator::before,
-    .separator::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid #000;
-    }
-
-    .separator:not(:empty)::before {
-        margin-right: .25em;
-    }
-
-    .separator:not(:empty)::after {
-        margin-left: .25em;
-    }
-
-}
-
-/* Header */
-@media (max-width: 1500px) {
-
-
-    .email-container {
-        background-color: #FFFFFF;
-        padding: 0.5vh 60% 0.5vh 1vh;
-        border-radius: 5px;
-    }
-
-    .gmail-icon {
-        display: inline-flex;
-        width: 4vh;
-        height: 4vh;
-        margin-right: 2vh;
-        margin-top: 0.5vh;
-        background-image: url(../assets/gmailicon-removebg-preview.png);
-        background-size: contain;
-        background-repeat: no-repeat;
-    }
-
-
-    .gmail-icon::after {
-        content: "Gmail";
-        margin-left: 10vh;
-        margin-top: 0.8vh;
-    }
-
-
-    .form-container {
-        background-color: var(--main-primary-color);
-        margin-top: 50%;
-        border-radius: 15px;
-        margin-left: 5%;
-        margin-right: 5%;
-        /* padding-bottom: 5vh; */
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 30px 25px 5px 25px;
-    }
-
-    input,
-    .form-button {
-        background-color: #FFFFFF;
-        border-color: #FFFFFF;
-        border: 0;
-
-        border-radius: 5px;
-
-        width: 90%;
-        height: 5vh;
-        margin: 1%;
-        text-align: center;
-
-        font-size: 16px;
-
-    }
-
-    .form-button {
-        margin-top: 1.5vh;
-        background-color: var(--main-secondary-color);
-        border-radius: 15px;
-    }
-
-
-    .separator {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        padding-top: 2vh;
-    }
-
-    .separator::before,
-    .separator::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid #000;
-    }
-
-    .separator:not(:empty)::before {
-        margin-right: .25em;
-    }
-
-    .separator:not(:empty)::after {
-        margin-left: .25em;
-    }
-
-
-}
 </style>

@@ -1,105 +1,95 @@
 <template>
-
-    <Sidebar />
-
     <div class="about">
-    <p>In to am attended desirous raptures declared diverted confined at. Collected instantly remaining up certainly to
-        necessary as. Over walk dull into son boy door went new. At or happiness commanded daughters as. Is handsome an
-        declared at received in extended vicinity subjects. Into miss on he over been late pain an. Only week bore boy what
-        fat case left use. Match round scale now sex style far times. Your me past an much.
 
-        Now residence dashwoods she excellent you. Shade being under his bed her. Much read on as draw. Blessing for
-        ignorant exercise any yourself unpacked. Pleasant horrible but confined day end marriage. Eagerness furniture set
-        preserved far recommend. Did even but nor are most gave hope. Secure active living depend son repair day ladies now.
 
-        Pleased him another was settled for. Moreover end horrible endeavor entrance any families. Income appear extent on
-        of thrown in admire. Stanhill on we if vicinity material in. Saw him smallest you provided ecstatic supplied. Garret
-        wanted expect remain as mr. Covered parlors concern we express in visited to do. Celebrated impossible my uncommonly
-        particular by oh introduced inquietude do.
+        <div class="about-container">
+            <div class="about-line">
+                <img src="../assets/verticle_line.png" />
+            </div>
 
-        Impossible considered invitation him men instrument saw celebrated unpleasant. Put rest and must set kind next many
-        near nay. He exquisite continued explained middleton am. Voice hours young woody has she think equal. Estate moment
-        he at on wonder at season little. Six garden result summer set family esteem nay estate. End admiration mrs
-        unreserved discovered comparison especially invitation.
+            <div class="about-column">
+                <h1>What's our</h1>
+                <h1 class="about_right_header">Story?</h1>
 
-        Cultivated who resolution connection motionless did occasional. Journey promise if it colonel. Can all mirth abode
-        nor hills added. Them men does for body pure. Far end not horses remain sister. Mr parish is to he answer roused
-        piqued afford sussex. It abode words began enjoy years no do ﻿no. Tried spoil as heart visit blush or. Boy possible
-        blessing sensible set but margaret interest. Off tears are day blind smile alone had.
 
-        It prepare is ye nothing blushes up brought. Or as gravity pasture limited evening on. Wicket around beauty say she.
-        Frankness resembled say not new smallness you discovery. Noisier ferrars yet shyness weather ten colonel. Too him
-        himself engaged husband pursuit musical. Man age but him determine consisted therefore. Dinner to beyond regret
-        wished an branch he. Remain bed but expect suffer little repair.
+                <p>
+                    <div class="about-p-titles">About ClosetSnap</div>
 
-        Sociable on as carriage my position weddings raillery consider. Peculiar trifling absolute and wandered vicinity
-        property yet. The and collecting motionless difficulty son. His hearing staying ten colonel met. Sex drew six easy
-        four dear cold deny. Moderate children at of outweigh it. Unsatiable it considered invitation he travelling
-        insensible. Consulted admitting oh mr up as described acuteness propriety moonlight.
+                    ClosetSnap is a cutting-edge digital wardrobe solution designed to revolutionize the way you manage and
+                    explore
+                    your personal fashion collection. Say goodbye to the days of rummaging through your physical closet to
+                    find
+                    the
+                    perfect outfit. With ClosetSnap, your entire wardrobe is just a click away.
 
-        Up is opinion message manners correct hearing husband my. Disposing commanded dashwoods cordially depending at at.
-        Its strangers who you certainty earnestly resources suffering she. Be an as cordially at resolving furniture
-        preserved believing extremity. Easy mr pain felt in. Too northward affection additions nay. He no an nature ye
-        talent houses wisdom vanity denied.
+                    <div class="about-p-titles">Our Mission</div>
+                    At ClosetSnap, our mission is to simplify and enhance your fashion experience. We understand the
+                    challenges
+                    of
+                    maintaining and organizing a physical wardrobe. That's why we've created a platform that allows you to
+                    effortlessly digitize your clothing collection, providing you with easy access to your clothes anytime,
+                    anywhere.
 
-        It real sent your at. Amounted all shy set why followed declared. Repeated of endeavor mr position kindness offering
-        ignorant so up. Simplicity are melancholy preference considered saw companions. Disposal on outweigh do speedily in
-        on. Him ham although thoughts entirely drawings. Acceptance unreserved old admiration projection nay yet him. Lasted
-        am so before on esteem vanity oh.
+                    Join ClosetSnap today and unlock the full potential of your wardrobe. Experience the convenience,
+                    creativity,
+                    and joy of a digital fashion revolution. Simplify your style and embrace a new era of fashion with
+                    ClosetSnap.
+                </p>
+            </div>
+        </div>
 
-        Ask especially collecting terminated may son expression. Extremely eagerness principle estimable own was man. Men
-        received far his dashwood subjects new. My sufficient surrounded an companions dispatched in on. Connection too
-        unaffected expression led son possession. New smiling friends and her another. Leaf she does none love high yet.
-        Snug love will up bore as be. Pursuit man son musical general pointed. It surprise informed mr advanced do outweigh.
-    </p></div>
+
+
+    </div>
 </template>
 
 
 <script lang=ts>
 
 
-import { logOut } from '@/scripts/auth_signout';
 
-import Sidebar from '@/components/Sidebar.vue';
 
 export default {
 
-    components: {
-        Sidebar,
-    },
 
-    data() {
-        return {
-            auth: false,
-        }
-    },
-
-    mounted() {
-    },
-
-    methods: {
-
-        authLogOut() {
-            logOut();
-        }
-    }
 }
 
 </script>
 
 
 <style>
-
-
-.about{
+.about-container {
     display: flex;
-    margin-top: 5vh;
-    text-align: center;
-    justify-content: center;
+    flex-direction: row;
+    margin-top: 3vh;
 }
 
-p{
-    
+.about-column {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.about_right_header {
+    margin-left: auto;
+}
+
+.about-line img {
+    margin-top: 15vh;
+    height: 75vh;
+    padding-right: 4vh;
+}
+
+.about-p-titles {
+    margin-bottom: 1vh;
+    font-size: large;
+}
+
+.about-p-titles:nth-of-type(2){
+    margin-top: 4vh;
+}
+
+p {
     max-width: 30ch;
 }
 </style>
