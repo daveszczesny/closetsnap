@@ -33,10 +33,14 @@ export default {
         getAuth().onAuthStateChanged((user) => {
             if(user){
                 this.auth = true;
+                // if logged in show account analysis
             }else{
                 this.auth = false;
+
+                // if not logged in redirect to login page
+
                 //@ts-ignore
-                this.$router.push('/')
+                this.$router.push('/Login')
             }
         })
     }

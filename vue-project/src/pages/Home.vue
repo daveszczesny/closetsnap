@@ -26,9 +26,6 @@
         <img src="../assets/image_home_page3.png" />
         <img src="../assets/image_home_page4.png" />
     </div>
-
-
-
 </template>
 
 
@@ -40,7 +37,6 @@
 
 
 <style>
-
 .images {
     display: flex;
     justify-content: space-between;
@@ -67,11 +63,11 @@
 
 .small_header {
     margin-top: 3vh;
-    display:flex;
+    display: flex;
     justify-content: center;
 }
 
-.small_header h1{
+.small_header h1 {
     font-size: 30px;
 }
 

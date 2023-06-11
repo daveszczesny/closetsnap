@@ -1,7 +1,7 @@
 
 
 <template>
-  <div :class="{ 'sidebar-open': sidebarOpen }">
+  <div class="app-nav-bar" :class="{ 'sidebar-open': sidebarOpen }">
     <header v-if="!sidebarOpen">
       <img id="menubar" class="menubar" @click="toggleSidebar" src="./assets/menubar.png">
       <p class="webname">CLOSET SNAP</p>
@@ -54,6 +54,12 @@ export default {
 header {
   display: flex;
   flex-direction: row;
+
+
+  /* fixes the navbar to the top of the screen */
+  position: sticky;
+  top:0;
+
 }
 
 .webname {

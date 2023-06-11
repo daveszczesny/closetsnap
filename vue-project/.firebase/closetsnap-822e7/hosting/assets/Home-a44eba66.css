@@ -1,1 +1,0 @@
-.greet{display:flex;justify-content:center}.image-container{display:flex;overflow:auto;scroll-snap-type:x mandatory;margin:5vh 2vh 2vh}.image-container>.item{min-width:100%;scroll-snap-align:start}@media (max-width: 1500px){.logo{display:flex;flex-direction:column;align-items:center;margin-bottom:10px}.img-responsive{max-width:max-content;height:auto}}
