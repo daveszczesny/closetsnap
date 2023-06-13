@@ -1,1 +1,0 @@
-import{g as e,_ as s}from"./index-86b9f82a.js";const u={data(){return{auth:!1}},async mounted(){e().onAuthStateChanged(t=>{t?this.auth=!0:(this.auth=!1,this.$router.push("/"))})}};function a(t,n,o,r,c,h){return null}const f=s(u,[["render",a],["__file","/home/dave/Documents/VueFleet/vue-project/src/pages/Account.vue"]]);export{f as default};

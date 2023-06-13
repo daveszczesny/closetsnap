@@ -1,27 +1,22 @@
 <template>
-    <Sidebar />
+
+    <div class="closet-title">
+        <h1>{{ name }}'s Closet</h1>
+    </div>
+    <div class="closet-circle">
+        <img @click="addToCloset" src="../assets/add.png" />
+    </div>
 
     <div id="closetDiv" class="closetDiv">
 
     </div>
 
-    <div v-if="emptyCloset">
-        <div class="empty-closet-container">
-
-        </div>
+    <div class="closet-empty" v-if="emptyCloset == true">
+        <img src="../assets/sad.png" />
     </div>
 
-    <div v-if="!emptyCloset">
-        <div class="closet-container">
-
-        </div>
-    </div>
-
-
-    <div class="add-button">
-        <button @click="addToCloset">+</button>
-    </div>
 </template>
+
 <script lang="ts">
 
 import { getAuth } from '@firebase/auth';
@@ -29,18 +24,13 @@ import { getData } from '@/scripts/db_read_user';
 import { logOut } from '@/scripts/auth_signout';
 import { getStorage, ref, list, listAll, getDownloadURL } from '@firebase/storage';
 
-import emptyCloset from '@/assets/sad.png';
 
 // components
 
-import Sidebar from '@/components/Sidebar.vue';
 import { doc } from 'firebase/firestore';
 
 export default {
 
-    components: {
-        Sidebar,
-    },
 
     data() {
         return {
@@ -63,6 +53,8 @@ export default {
             } else {
                 console.log("Logged out")
                 this.auth = false;
+                //@ts-ignore
+                this.$router.push('/Login');
             }
         })
 
@@ -106,7 +98,15 @@ export default {
 
                         })
                 })
+
+                setTimeout(() => {
+                    if(closet.childNodes.length  < 1){
+                    this.emptyCloset = true;
+                }else{
+                    this.emptyCloset = false;
+                }
                 
+                }, 500)
 
 
             }).catch(error => {
@@ -129,43 +129,21 @@ export default {
 </script>
 <style>
 
-
-.image-title-container {
-    position: absolute;
-    margin: -4vh 0px 0px 0px;    
+.closet-title {
+    margin-top: 5vh;
+    padding-bottom: 5vh;
 }
 
-.image-container {
-    display: flex;
-    overflow: auto;
-    scroll-snap-type: x mandatory;
-    margin: 5vh 2vh 2vh 2vh;
-}
-
-.image-container>.item{
-    min-width: 100%;
-    scroll-snap-align: start;
-}
-
-.add-button button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+.closet-circle {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-
-    font-size: x-large;
+    bottom: 0;
+    right: 0;
 }
 
-.login-info {
-    display: flex;
-    flex-direction: row;
+.closet-empty {
+    display:flex;
     justify-content: center;
-    margin-top: 50%;
+    align-items: center;
 }
 
-.login-info h2 {
-    font-size: large;
-}
 </style>

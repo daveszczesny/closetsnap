@@ -17,6 +17,10 @@ export async function addUser(auth: any, email: string, name: string) {
             name: name,
 
         })
+
+
+        return true;
+
     } catch (e) {
         console.error(e);
     }

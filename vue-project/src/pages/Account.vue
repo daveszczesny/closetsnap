@@ -12,29 +12,39 @@
  -->
 
 
+ 
+ 
 <template>
-
+    <button @click="logout">Log out</button>
 </template>
 
 
 <script lang="ts">
 
 import { getAuth } from 'firebase/auth';
+import { logOut } from '../scripts/auth_signout'
 
 export default {
-    
+
     data() {
         return {
             auth: false
         }
     },
 
+    methods: {
+        logout() {
+            logOut();
+        }
+    },
+
     async mounted() {
         getAuth().onAuthStateChanged((user) => {
-            if(user){
+            if (user) {
                 this.auth = true;
+                console.log("Signed in")
                 // if logged in show account analysis
-            }else{
+            } else {
                 this.auth = false;
 
                 // if not logged in redirect to login page
@@ -48,5 +58,4 @@ export default {
 
 </script>
 
-<style>
-</style>
+<style></style>

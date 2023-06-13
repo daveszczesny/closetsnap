@@ -15,5 +15,6 @@ export default [
     {path: '/Login', component: loadPage('Login')},
     {path: '/AddCloset', component: loadPage('AddCloset')},
     {path: '/Account', component: loadPage('Account')},
+    {path: '/CreateAccount', component: loadPage('CreateAccount')},
 
 ]
