@@ -40,7 +40,7 @@
         <div class="login-bottom-section">
             <button @click="login_join_us">Join us</button>
             <div class="login-circle">
-                <img src="../assets/arrow_right.png" />
+                <img @click="signin_email" src="../assets/arrow_right.png" />
             </div>
         </div>
 

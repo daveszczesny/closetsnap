@@ -1,5 +1,4 @@
 <template>
-
     <div class="closet-title">
         <h1>{{ name }}'s Closet</h1>
     </div>
@@ -14,7 +13,6 @@
     <div class="closet-empty" v-if="emptyCloset == true">
         <img src="../assets/sad.png" />
     </div>
-
 </template>
 
 <script lang="ts">
@@ -64,7 +62,7 @@ export default {
             .then((res) => {
                 const closet = document.getElementById('closetDiv') as HTMLDivElement;
                 res.prefixes.forEach(folder => {
-                
+
                     list(ref(storage, folder.fullPath))
                         .then(res2 => {
 
@@ -72,7 +70,10 @@ export default {
                             res2.items.forEach(itemRef => {
                                 itemArr.push(itemRef);
                             })
-                            
+
+                            const folderDiv = document.createElement('div');
+                            folderDiv.classList.add('folder-container');
+
                             const imgDiv = document.createElement('div');
                             imgDiv.classList.add('image-container')
                             const title = document.createElement('p');
@@ -82,36 +83,62 @@ export default {
                             titleDiv.classList.add('image-title-container');
                             titleDiv.appendChild(title);
 
-                            imgDiv.appendChild(titleDiv);
+                            folderDiv.appendChild(titleDiv);
                             itemArr.forEach(item => {
                                 getDownloadURL(item)
                                     .then(image => {
                                         const imgElement = document.createElement('img');
                                         imgElement.setAttribute('src', image);
-                                        imgElement.style.width = `${window.innerWidth*0.95}px`;
-                                        imgElement.style.height = `${window.innerWidth*0.95}px`;
+                                        imgElement.setAttribute('loading', 'lazy'); // lazy loading
+                                        imgElement.style.width = `${window.innerWidth * 0.95}px`;
+                                        imgElement.style.height = `${window.innerWidth * 0.95}px`;
                                         imgElement.classList.add('item');
+                                        imgElement.setAttribute('visibility', 'hidden')
+
+                                        
+                                        const imgDivElement = document.createElement('div');
+                                        imgDivElement.classList.add('closet-custom-loader');
+
+                                        folderDiv.appendChild(imgDivElement);
                                         imgDiv.appendChild(imgElement);
+
+
+                                        if (imgElement.complete) {
+                                            imgElement.style.visibility = 'visible';
+                                            imgDivElement.style.display = 'none';
+                                        } else {
+                                            imgElement.onload = () => {
+                                                imgElement.style.visibility = 'visible';
+
+                                                imgDivElement.style.display = 'none';
+                                            }
+                                        }
+
                                     })
                             })
-                            closet.appendChild(imgDiv);
 
+
+                            folderDiv.appendChild(imgDiv);
+                            closetDiv.appendChild(folderDiv);
                         })
                 })
-
-                setTimeout(() => {
-                    if(closet.childNodes.length  < 1){
-                    this.emptyCloset = true;
-                }else{
-                    this.emptyCloset = false;
-                }
-                
-                }, 500)
 
 
             }).catch(error => {
                 console.log(error);
             })
+
+
+        const closetDiv = document.getElementById('closetDiv') as HTMLDivElement;
+        const imgDivs = closetDiv?.querySelectorAll('div');
+        setTimeout(() => {
+            if (imgDivs.item.length < 1) {
+                this.emptyCloset = true;
+            } else {
+                this.emptyCloset = false;
+            }
+
+        }, 1000)
 
     },
 
@@ -128,7 +155,6 @@ export default {
 
 </script>
 <style>
-
 .closet-title {
     margin-top: 5vh;
     padding-bottom: 5vh;
@@ -141,9 +167,81 @@ export default {
 }
 
 .closet-empty {
-    display:flex;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.item {
+    object-fit: cover;
+    object-position: center;
+}
+
+.item.loaded {
+    display: block;
+}
+
+/* image container */
+
+.image-title-container {
+    display: flex;
+    flex-direction: column;
+    
+    font-size: large;
+
+    margin-top: 1vh;
+
+}
+
+.image-container {
+    display: flex;
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+}
+
+.image-container>.item {
+    min-width: 100%;
+    scroll-snap-align: start;
+}
+
+/* custom loader */
+.closet-custom-loader {
+
+    position: relative;
+    left: 35%;
+    top: 35%;
+
+    width: 100px;
+    height: 100px;
+    display: grid;
+    /* justify-content: center; */
+}
+
+.closet-custom-loader::before,
+.closet-custom-loader::after {
+    content: "";
+    grid-area: 1/1;
+    --c: radial-gradient(farthest-side, #766DF4 92%, #0000);
+    background:
+        var(--c) 50% 0,
+        var(--c) 50% 100%,
+        var(--c) 100% 50%,
+        var(--c) 0 50%;
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    animation: s2 1s infinite;
+}
+
+.closet-custom-loader::before {
+    margin: 8px;
+    filter: hue-rotate(45deg);
+    background-size: 16px 16px;
+    animation-timing-function: linear
+}
+
+@keyframes s2 {
+    100% {
+        transform: rotate(.5turn)
+    }
+}
 </style>
