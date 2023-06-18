@@ -1,6 +1,10 @@
 <template>
     <div class="closet-title">
         <h1>{{ name }}'s Closet</h1>
+        <div class="closet-title-img">
+            <img @click="toggleEdit" src="../assets/edit.png" />
+
+        </div>
     </div>
     <div class="closet-circle">
         <img @click="addToCloset" src="../assets/add.png" />
@@ -20,12 +24,9 @@
 import { getAuth } from '@firebase/auth';
 import { getData } from '@/scripts/db_read_user';
 import { logOut } from '@/scripts/auth_signout';
-import { getStorage, ref, list, listAll, getDownloadURL } from '@firebase/storage';
+import { getStorage, ref, list, listAll, getDownloadURL, deleteObject } from '@firebase/storage';
 
 
-// components
-
-import { doc } from 'firebase/firestore';
 
 export default {
 
@@ -35,6 +36,7 @@ export default {
             auth: false,
             name: "",
             emptyCloset: true,
+            editMode: false,
 
         }
     },
@@ -95,7 +97,19 @@ export default {
                                         imgElement.classList.add('item');
                                         imgElement.setAttribute('visibility', 'hidden')
 
-                                        
+
+                                        imgElement.addEventListener('click', async() => {
+                                            // delete image when in edit mode
+                                            if(this.editMode){
+                                                const deleteConfirmation = window.confirm("Are you sure you want to delete this image?");
+                                                if(deleteConfirmation){
+                                                    await this.deleteImage(image);
+                                                    
+                                                    location.reload();
+                                                }
+                                            }
+                                        })
+
                                         const imgDivElement = document.createElement('div');
                                         imgDivElement.classList.add('closet-custom-loader');
 
@@ -140,25 +154,86 @@ export default {
 
         }, 1000)
 
+
+
+
+
+
     },
 
     methods: {
+
+        async deleteImage(imageUrl : any){
+            const storage = getStorage();
+            const imageRef = ref(storage, imageUrl);
+
+            try{
+                await deleteObject(imageRef);
+                console.log("Imaged deleted");
+            } catch( error ){
+                console.log("Error deleting image");
+            }
+        },
+
         authLogOut() {
             logOut(); // logs out the current user
         },
         addToCloset() {
             //@ts-ignore
             this.$router.push('AddCloset');
+        },
+        toggleEdit() {
+            this.editMode = !this.editMode;
+            const closetDiv = document.getElementById('closetDiv') as HTMLDivElement;
+            const imgElements = closetDiv.querySelectorAll('img');
+
+            if (this.editMode) {
+                imgElements.forEach((imgElement) => {
+                    imgElement.classList.add('item-alt');
+                    imgElement.classList.remove('item');
+
+                });
+            } else {
+                imgElements.forEach((imgElement) => {
+                    imgElement.classList.add('item');
+                    imgElement.classList.remove('item-alt')
+                })
+            }
+
+
         }
     }
 }
 
 </script>
 <style>
+/* Top title section */
+
 .closet-title {
+    display: flex;
+    flex-direction: row;
     margin-top: 5vh;
     padding-bottom: 5vh;
+
+    justify-content: space-between;
 }
+
+
+.closet-title-img {
+
+    display: flex;
+    float: right;
+    width: 5vh;
+    height: 5vh;
+
+}
+
+.closet-title-img img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Add button */
 
 .closet-circle {
     position: fixed;
@@ -172,9 +247,17 @@ export default {
     align-items: center;
 }
 
+
+/* image */
+
 .item {
     object-fit: cover;
     object-position: center;
+}
+
+.item-alt {
+    max-width: 15vh;
+    max-height: 15vh;
 }
 
 .item.loaded {
@@ -186,7 +269,7 @@ export default {
 .image-title-container {
     display: flex;
     flex-direction: column;
-    
+
     font-size: large;
 
     margin-top: 1vh;

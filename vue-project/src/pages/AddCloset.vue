@@ -2,6 +2,10 @@
     <div class="container">
         <img id="image-preview">
 
+        <div class="ac-loader">
+            <div class="ac-custom-loader"></div>
+
+        </div>
 
         <div class="bottom">
             <div class="category-dropdown">
@@ -23,6 +27,8 @@
                     <option value="Knitwear">Knitwear</option>
                 </select>
             </div>
+
+
             <div class="buttons">
 
 
@@ -90,7 +96,7 @@ export default {
             const storage = getStorage();
             const image = document.getElementById('image') as HTMLInputElement;
             const option = document.getElementById('category') as HTMLSelectElement;
-            const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + option.value + "/"+this.generateRandomString(30));
+            const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + option.value + "/" + this.generateRandomString(30));
 
             const file = image?.files?.[0];
             if (file) {
@@ -107,6 +113,11 @@ export default {
                                 break;
                             case 'running':
                                 console.log('Upload is running');
+
+
+                                const loader = document.querySelector('.ac-loader') as HTMLDivElement;
+                                loader.style.display = 'flex';
+
                                 break;
                         }
                     },
@@ -115,10 +126,15 @@ export default {
                     },
                     () => {
                         console.log('Upload Complete');
+                        const loader = document.querySelector('.ac-loader') as HTMLDivElement;
+                        loader.style.display = 'none';
                         getDownloadURL(imageRef).then(url => {
                             console.log("File available at", url);
 
                         })
+
+                        //@ts-ignore
+                        this.$router.push('/Closet')
                     }
                 )
             }
@@ -166,7 +182,7 @@ export default {
     /* position: fixed;
     bottom: 0; */
 
-    
+
 
 }
 
@@ -202,5 +218,59 @@ input[type="file"] {
     font-size: medium;
     font-weight: 400;
     color: var(--text-color);
+}
+
+
+/* loading */
+
+/* custom loader */
+
+.ac-loader {
+    display: none;
+
+    position: relative;
+    left: -3vh;
+    top: 5rem;
+
+}
+
+.ac-custom-loader {
+
+    position: relative;
+    left: 35%;
+    top: 35%;
+
+    width: 100px;
+    height: 100px;
+    display: grid;
+    /* justify-content: center; */
+}
+
+.ac-custom-loader::before,
+.ac-custom-loader::after {
+    content: "";
+    grid-area: 1/1;
+    --c: radial-gradient(farthest-side, #766DF4 92%, #0000);
+    background:
+        var(--c) 50% 0,
+        var(--c) 50% 100%,
+        var(--c) 100% 50%,
+        var(--c) 0 50%;
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    animation: s2 1s infinite;
+}
+
+.ac-custom-loader::before {
+    margin: 8px;
+    filter: hue-rotate(45deg);
+    background-size: 16px 16px;
+    animation-timing-function: linear
+}
+
+@keyframes s2 {
+    100% {
+        transform: rotate(.5turn)
+    }
 }
 </style>
