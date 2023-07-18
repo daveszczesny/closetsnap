@@ -7,7 +7,7 @@
     </div>
 
     <div class="main-image-container">
-        <img src="../assets/image_home_page1.png" />
+        <img src="../assets/Subject.png" />
     </div>
 
     <div class="small_header">
@@ -21,11 +21,6 @@
         <img src="../assets/separation_line.png" />
     </div>
 
-    <div class="images">
-        <img src="../assets/image_home_page2.png" />
-        <img src="../assets/image_home_page3.png" />
-        <img src="../assets/image_home_page4.png" />
-    </div>
 </template>
 
 
@@ -33,28 +28,11 @@
 <script lang="ts">
 
 
+
 </script>
 
 
 <style>
-.images {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4vh;
-}
-
-
-.images img:first-child {
-    margin-right: auto;
-    margin-left: auto;
-}
-
-.images img {
-    width: 100px;
-    height: 200px;
-    flex: 1;
-    margin-left: 10px;
-}
 
 .big_header {
     display: flex;
@@ -72,9 +50,7 @@
 }
 
 .main-image-container img {
-    margin-top: 4vh;
     width: 174px;
-    height: 263px;
 }
 
 .top_header {

@@ -254,7 +254,7 @@ export default {
     object-fit: cover;
     object-position: center;
 }
-
+        
 .item-alt {
     max-width: 15vh;
     max-height: 15vh;

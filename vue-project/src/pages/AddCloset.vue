@@ -1,11 +1,11 @@
 <template>
+    <div id="image-preview-container" class="image-preview-container">
+    </div>
+    <div class="loader">
+
+    </div>
     <div class="container">
-        <img id="image-preview">
 
-        <div class="ac-loader">
-            <div class="ac-custom-loader"></div>
-
-        </div>
 
         <div class="bottom">
             <div class="category-dropdown">
@@ -36,7 +36,7 @@
                 <label style="" for="image" class="custom-file-upload">
                     <p>Choose File</p>
                 </label>
-                <input type="file" id="image" accept="image/*" @change="onFileChange" />
+                <input type="file" id="image" accept="image/*" @change="onFileChange" multiple />
             </div>
         </div>
     </div>
@@ -47,9 +47,9 @@ import { getAuth } from 'firebase/auth';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 
 export default {
+
     data() {
         return {
-
         }
     },
 
@@ -57,19 +57,21 @@ export default {
     methods: {
 
         onFileChange(event: any) {
-            const imagePreview = document.getElementById('image-preview') as HTMLImageElement;
-            const file = event.target?.files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
+            const files = event.target?.files;
 
+            for (let i = 0; files && i < files.length; i++) {
+                const reader = new FileReader();
+                reader.readAsDataURL(files[i]);
+                reader.onload = () => {
+                    const img = document.createElement('img');
+                    img.src = reader.result as string;
+                    img.width = window.innerWidth * 0.95;
+                    img.height = window.innerWidth * 0.95;
 
-                imagePreview.src = reader.result as string;
+                    img.classList.add('item-preview');
 
-                imagePreview.width = window.innerWidth * 0.95;
-                imagePreview.height = window.innerWidth * 0.95;
-
-
+                    document.getElementById('image-preview-container')?.appendChild(img);
+                }
             }
 
         },
@@ -96,48 +98,45 @@ export default {
             const storage = getStorage();
             const image = document.getElementById('image') as HTMLInputElement;
             const option = document.getElementById('category') as HTMLSelectElement;
-            const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + option.value + "/" + this.generateRandomString(30));
 
-            const file = image?.files?.[0];
-            if (file) {
-                const uploadTask = uploadBytesResumable(imageRef, file);
+            const files = image?.files;
+            let i = 0;
+            var foo = 0;
+            var tar = files?.length;
 
-                uploadTask.on(
-                    "state_changed",
-                    snapshot => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log(progress);
-                        switch (snapshot.state) {
-                            case 'paused':
-                                console.log("Upload is paused");
-                                break;
-                            case 'running':
-                                console.log('Upload is running');
+            for (i = 0; files && i < files?.length; i++) {
+                const imageRef = ref(storage, "users/" + getAuth()?.currentUser?.email + "/" + option.value + "/" + this.generateRandomString(30));
+                const file = files?.[i];
+                if (file) {
+                    const uploadTask = uploadBytesResumable(imageRef, file);
 
+                    uploadTask.on(
+                        "state_changed",
+                        snapshot => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100; // progress in percentage
+                            console.log(progress); // output progress transferred
 
-                                const loader = document.querySelector('.ac-loader') as HTMLDivElement;
-                                loader.style.display = 'flex';
+                        },
+                        error => {
+                            console.log(error);
+                        },
+                        () => {
+                            console.log("Upload complete new");
+                            getDownloadURL(imageRef).then(url => {
+                                console.log("File available at", url);
 
-                                break;
+                            })
+                            foo++;
+                            if (tar && foo >= tar) {
+                                //@ts-ignore
+                                this.$router.push('/Closet');
+                            }
                         }
-                    },
-                    error => {
-                        console.log(error)
-                    },
-                    () => {
-                        console.log('Upload Complete');
-                        const loader = document.querySelector('.ac-loader') as HTMLDivElement;
-                        loader.style.display = 'none';
-                        getDownloadURL(imageRef).then(url => {
-                            console.log("File available at", url);
-
-                        })
-
-                        //@ts-ignore
-                        this.$router.push('/Closet')
-                    }
-                )
+                    )
+                }
             }
+
+
         }
     },
 }
@@ -145,7 +144,75 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+/* Uploading files section */
+
+.uploading-files-container {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50%;
+
+}
+
+.custom-loader {
+    width: 150px;
+    height: 150px;
+    display: grid;
+}
+
+.custom-loader::before,
+.custom-loader::after {
+    content: "";
+    grid-area: 1/1;
+    --c: radial-gradient(farthest-side, #766DF4 92%, #0000);
+    background:
+        var(--c) 50% 0,
+        var(--c) 50% 100%,
+        var(--c) 100% 50%,
+        var(--c) 0 50%;
+    background-size: 12px 12px;
+    background-repeat: no-repeat;
+    animation: s2 1s infinite;
+}
+
+.custom-loader::before {
+    margin: 4px;
+    filter: hue-rotate(45deg);
+    background-size: 16px 16px;
+    animation-timing-function: linear
+}
+
+@keyframes s2 {
+    100% {
+        transform: rotate(.5turn)
+    }
+}
+
+/* -------------------- */
+
+/* Image preview */
+
+.image-preview-container {
+    display: flex;
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+}
+
+.image-preview-container>.item-preview {
+    min-width: 100%;
+    scroll-snap-align: start;
+}
+
+.item-preview {
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* ---------------------- */
 .container {
     display: flex;
     flex-direction: column;
@@ -218,59 +285,5 @@ input[type="file"] {
     font-size: medium;
     font-weight: 400;
     color: var(--text-color);
-}
-
-
-/* loading */
-
-/* custom loader */
-
-.ac-loader {
-    display: none;
-
-    position: relative;
-    left: -3vh;
-    top: 5rem;
-
-}
-
-.ac-custom-loader {
-
-    position: relative;
-    left: 35%;
-    top: 35%;
-
-    width: 100px;
-    height: 100px;
-    display: grid;
-    /* justify-content: center; */
-}
-
-.ac-custom-loader::before,
-.ac-custom-loader::after {
-    content: "";
-    grid-area: 1/1;
-    --c: radial-gradient(farthest-side, #766DF4 92%, #0000);
-    background:
-        var(--c) 50% 0,
-        var(--c) 50% 100%,
-        var(--c) 100% 50%,
-        var(--c) 0 50%;
-    background-size: 24px 24px;
-    background-repeat: no-repeat;
-    animation: s2 1s infinite;
-}
-
-.ac-custom-loader::before {
-    margin: 8px;
-    filter: hue-rotate(45deg);
-    background-size: 16px 16px;
-    animation-timing-function: linear
-}
-
-@keyframes s2 {
-    100% {
-        transform: rotate(.5turn)
-    }
 }
 </style>
