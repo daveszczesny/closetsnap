@@ -2,11 +2,12 @@
  
 <template>
     <div class="account-heading">
-        <h1>Hi there!, you're signed in under </h1>
-        <h1 style="font-size: large; margin-left: 1vh; margin-top: 0.5vh">{{ email }}</h1>
+        <h1>Hi {{name}}!,</h1>
+        <h1>This is your account overview</h1>
     </div>
 
 
+    <p style="margin-top:2vh; margin-left: 2vh; color: white; font-size: large;">Storage allowance</p>
     <div class="storage">
         <div class="storage-bar">
             <div class="used-space">
@@ -31,7 +32,7 @@
 
 import { getAuth } from 'firebase/auth';
 import { logOut } from '../scripts/auth_signout'
-import { getStorage, ref, listAll, getMetadata } from 'firebase/storage';
+import { getData } from '@/scripts/db_read_user';
 
 import {getTotalBytesInFolder} from '../scripts/db_getTotalBytes';
 
@@ -41,6 +42,7 @@ export default {
         return {
             auth: false,
             email: null as string | null,
+            name: null as string | null,
             totalBytesUsed: 0,
             bytesToMb: 1000000,
             allowedStorageSpace: 512,
@@ -62,6 +64,10 @@ export default {
                 this.auth = true;
                 console.log("Signed in")
                 this.email = user.email;
+
+                getData("name").then((name) => {
+                    this.name = name;
+                })
                 // if logged in show account analysis
 
                 // Calculating user account analysis
@@ -123,7 +129,6 @@ export default {
 .storage {
     display: flex;
     justify-content: center;
-    margin-top: 5vh;
 }
 .storage-bar {
     width: 90%;

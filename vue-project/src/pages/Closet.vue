@@ -38,6 +38,7 @@ export default {
         }
     },
     async mounted() {
+
         getAuth().onAuthStateChanged((user) => {
             if (user) {
                 this.auth = true;
@@ -55,7 +56,7 @@ export default {
         })
 
         // loads and displays the clothes saved by the user
-        const parentFolder : string = `users/${getAuth().currentUser?.email}/`;
+        const parentFolder: string = `users/${getAuth().currentUser?.email}/`;
         await this.loadClothingItems(getStorage(), parentFolder);
 
     },
@@ -148,7 +149,16 @@ export default {
                     if (deleteConfirmation) {
                         await this.deleteImage(imageUrl);
 
-                        location.reload();
+
+                        const closetDiv = document.getElementById('closetDiv') as HTMLDivElement;
+                        closetDiv.innerHTML = '';
+
+                        // loads and displays the clothes saved by the user
+                        const parentFolder: string = `users/${getAuth().currentUser?.email}/`;
+                        await this.loadClothingItems(getStorage(), parentFolder);
+
+
+
                     }
                 }
 

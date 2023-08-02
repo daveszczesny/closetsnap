@@ -36,8 +36,7 @@ export async function getData(data: string) {
     querySnapshot.forEach(doc => {
         const email: string = doc.data().email;
         
-        //@ts-ignore
-        if (email === auth.currentUser.email) {
+        if (email === auth?.currentUser?.email) {
             result = doc.data()[data];
         }
     })
