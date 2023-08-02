@@ -21,15 +21,12 @@
 
 <script lang="ts">
 
-import { getAuth } from '@firebase/auth';
-import { getData } from '@/scripts/db_read_user';
 import { logOut } from '@/scripts/auth_signout';
-import { getStorage, ref, list, listAll, getDownloadURL, deleteObject } from '@firebase/storage';
-
-
+import { getData } from '@/scripts/db_read_user';
+import { getAuth } from '@firebase/auth';
+import { deleteObject, getDownloadURL, getStorage, list, ref } from '@firebase/storage';
 
 export default {
-
 
     data() {
         return {
@@ -49,7 +46,6 @@ export default {
                     this.name = name;
                 })
 
-
             } else {
                 console.log("Logged out")
                 this.auth = false;
@@ -58,119 +54,172 @@ export default {
             }
         })
 
-        const storage = getStorage();
-        const parentFolder = `users/${getAuth().currentUser?.email}/`; // parent folder for category folders of clothing types
-        list(ref(storage, parentFolder))
-            .then((res) => {
-                const closet = document.getElementById('closetDiv') as HTMLDivElement;
-                res.prefixes.forEach(folder => {
-
-                    list(ref(storage, folder.fullPath))
-                        .then(res2 => {
-
-                            const itemArr: any[] = [];
-                            res2.items.forEach(itemRef => {
-                                itemArr.push(itemRef);
-                            })
-
-                            const folderDiv = document.createElement('div');
-                            folderDiv.classList.add('folder-container');
-
-                            const imgDiv = document.createElement('div');
-                            imgDiv.classList.add('image-container')
-                            const title = document.createElement('p');
-                            title.innerHTML = folder.name;
-
-                            const titleDiv = document.createElement('div');
-                            titleDiv.classList.add('image-title-container');
-                            titleDiv.appendChild(title);
-
-                            folderDiv.appendChild(titleDiv);
-                            itemArr.forEach(item => {
-                                getDownloadURL(item)
-                                    .then(image => {
-                                        const imgElement = document.createElement('img');
-                                        imgElement.setAttribute('src', image);
-                                        imgElement.setAttribute('loading', 'lazy'); // lazy loading
-                                        imgElement.style.width = `${window.innerWidth * 0.95}px`;
-                                        imgElement.style.height = `${window.innerWidth * 0.95}px`;
-                                        imgElement.classList.add('item');
-                                        imgElement.setAttribute('visibility', 'hidden')
-
-
-                                        imgElement.addEventListener('click', async() => {
-                                            // delete image when in edit mode
-                                            if(this.editMode){
-                                                const deleteConfirmation = window.confirm("Are you sure you want to delete this image?");
-                                                if(deleteConfirmation){
-                                                    await this.deleteImage(image);
-                                                    
-                                                    location.reload();
-                                                }
-                                            }
-                                        })
-
-                                        const imgDivElement = document.createElement('div');
-                                        imgDivElement.classList.add('closet-custom-loader');
-
-                                        folderDiv.appendChild(imgDivElement);
-                                        imgDiv.appendChild(imgElement);
-
-
-                                        if (imgElement.complete) {
-                                            imgElement.style.visibility = 'visible';
-                                            imgDivElement.style.display = 'none';
-                                        } else {
-                                            imgElement.onload = () => {
-                                                imgElement.style.visibility = 'visible';
-
-                                                imgDivElement.style.display = 'none';
-                                            }
-                                        }
-
-                                    })
-                            })
-
-
-                            folderDiv.appendChild(imgDiv);
-                            closetDiv.appendChild(folderDiv);
-                        })
-                })
-
-
-            }).catch(error => {
-                console.log(error);
-            })
-
-
-        const closetDiv = document.getElementById('closetDiv') as HTMLDivElement;
-        const imgDivs = closetDiv?.querySelectorAll('div');
-        setTimeout(() => {
-            if (imgDivs.item.length < 1) {
-                this.emptyCloset = true;
-            } else {
-                this.emptyCloset = false;
-            }
-
-        }, 1000)
-
-
-
-
-
+        // loads and displays the clothes saved by the user
+        const parentFolder : string = `users/${getAuth().currentUser?.email}/`;
+        await this.loadClothingItems(getStorage(), parentFolder);
 
     },
 
     methods: {
 
-        async deleteImage(imageUrl : any){
+        /*
+            Load clothes
+        */
+        async loadClothingItems(storage: any, parentFolder: string) {
+            const closetDiv = document.getElementById('closetDiv') as HTMLDivElement;
+            const imgDivs = closetDiv?.querySelectorAll('div');
+
+
+            const res = await this.listPrefixInFolder(storage, parentFolder);
+
+            res.forEach(async folder => {
+                const res2 = await this.listItemsInFolder(storage, folder.fullPath);
+                const { folderDiv, imgDiv } = await this.createFolderContainer(folder.name);
+
+                res2.forEach(image_ => {
+                    getDownloadURL(image_)
+                        .then(image => {
+                            const imgElement = this.createImageElement(image);
+
+                            const imgDivElement = document.createElement('div');
+                            imgDivElement.classList.add('closet-custom-loader');
+
+                            folderDiv.appendChild(imgDivElement);
+                            imgDiv.appendChild(imgElement);
+
+                            this.showImages(imgElement, imgDivElement);
+                        })
+                })
+
+                folderDiv.appendChild(imgDiv);
+                closetDiv.appendChild(folderDiv);
+
+            });
+
+
+            setTimeout(() => {
+                if (imgDivs.item.length < 1) {
+                    this.emptyCloset = true;
+                } else {
+                    this.emptyCloset = false;
+                }
+
+            }, 1000)
+        },
+
+
+        /*
+            displays images
+        */
+
+        showImages(imgElement: HTMLImageElement, imgDivElement: HTMLDivElement) {
+            if (imgElement.complete) {
+                imgElement.style.visibility = 'visible';
+                imgDivElement.style.display = 'none';
+            } else {
+                imgElement.onload = () => {
+                    imgElement.style.visibility = 'visible';
+                    imgDivElement.style.display = 'none';
+                }
+            }
+        },
+
+        /*
+            create img element for folder container
+        */
+
+        createImageElement(imageUrl: string) {
+            const imgElement = document.createElement('img');
+
+            imgElement.setAttribute('src', imageUrl);
+            imgElement.setAttribute('loading', 'lazy');
+            imgElement.setAttribute('visibility', 'hidden')
+
+            imgElement.classList.add('item');
+
+            // set image dimensions
+            imgElement.style.width = `${window.innerWidth * 0.95}px`;
+            imgElement.style.height = `${window.innerWidth * 0.95}px`;
+
+            // add image click event, to delete image in edit mode
+            imgElement.addEventListener('click', async () => {
+                if (this.editMode) {
+                    const deleteConfirmation = window.confirm('Are you sure you want to delete this image');
+                    if (deleteConfirmation) {
+                        await this.deleteImage(imageUrl);
+
+                        location.reload();
+                    }
+                }
+
+            })
+            return imgElement;
+        },
+
+        /*
+            returns prefixes from a folderpath
+        */
+        async listPrefixInFolder(storage: any, folderPath: string) {
+            try {
+                const res = await list(ref(storage, folderPath));
+                return res.prefixes;
+            } catch (error) {
+                console.log(error);
+                alert("Error occured whilst grabbing your clothes... Try again");
+                return [];
+            }
+        },
+
+        /*
+            returns items from a folderpath
+        */
+        async listItemsInFolder(storage: any, folderPath: string) {
+            try {
+                const res = await list(ref(storage, folderPath));
+                return res.items;
+            } catch (error) {
+                console.log(error);
+                alert("Error occured whilst grabbing your clothes... Try again");
+                return [];
+            }
+        },
+
+        /*
+            creates a folder container for the images
+        */
+        async createFolderContainer(folderName: string) {
+            // creates folder container div and apply correct css format
+            const folderDiv = document.createElement('div');
+            folderDiv.classList.add('folder-container');
+
+            // create the img container and apply correct css format
+            const imgDiv = document.createElement('div');
+            imgDiv.classList.add('image-container')
+
+            // adds title to folder container of the folder's name
+            const titleDiv = document.createElement('div');
+            titleDiv.classList.add('image-title-container');
+            const title = document.createElement('p');
+            title.innerHTML = folderName;
+
+
+            titleDiv.appendChild(title);
+            folderDiv.appendChild(titleDiv);
+
+            return { folderDiv, imgDiv };
+        },
+
+
+
+        // TODO: change to cloud function
+        async deleteImage(imageUrl: any) {
             const storage = getStorage();
             const imageRef = ref(storage, imageUrl);
 
-            try{
+            try {
                 await deleteObject(imageRef);
                 console.log("Imaged deleted");
-            } catch( error ){
+            } catch (error) {
                 console.log("Error deleting image");
             }
         },
@@ -254,7 +303,7 @@ export default {
     object-fit: cover;
     object-position: center;
 }
-        
+
 .item-alt {
     max-width: 15vh;
     max-height: 15vh;

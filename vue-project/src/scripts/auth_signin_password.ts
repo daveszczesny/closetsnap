@@ -10,6 +10,7 @@ import { signInWithEmailAndPassword, type Auth} from "firebase/auth";
  * @param {Auth} auth 
  * @param {string} email 
  * @param {string} password 
+ * @returns user | error
  */
 
 export function signIn(auth: Auth, email: string, password: string) {
