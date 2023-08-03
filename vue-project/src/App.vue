@@ -5,7 +5,7 @@
     <header v-if="!sidebarOpen">
       <img id="menubar" class="menubar" @click="toggleSidebar" src="./assets/menubar.png">
       <p class="webname">CLOSET SNAP</p>
-      <img class="menubar user" src="./assets/user.png">
+      <img id="webuser" class="menubar user" src="./assets/user.png">
     </header>
     <router-view></router-view>
   </div>
@@ -29,6 +29,19 @@ export default {
     return {
       sidebarOpen: false,
     }
+  },
+
+  mounted(){
+    const para = document.querySelector('.webname') as HTMLParagraphElement;
+    para.addEventListener('click', ()=>{
+      //@ts-ignore
+      this.$router.push('/');
+    });
+    const img = document.querySelector('#webuser') as HTMLImageElement;
+    img.addEventListener('click', () => {
+      //@ts-ignore
+      this.$router.push('/Account');
+    })
   },
 
   methods: {
