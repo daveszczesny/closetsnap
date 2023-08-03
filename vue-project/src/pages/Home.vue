@@ -84,7 +84,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-30%, -18%);
+    transform: translate(-30%, -14%);
     z-index: -1;
     width: 120vh;
     height: 120vh;

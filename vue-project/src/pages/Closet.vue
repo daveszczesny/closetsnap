@@ -14,6 +14,10 @@
 
     </div>
 
+
+    <div class="selected-item">
+    </div>
+
     <div class="closet-empty" v-if="emptyCloset == true">
         <img src="../assets/sad.png" />
     </div>
@@ -26,14 +30,18 @@ import { getData } from '@/scripts/db_read_user';
 import { getAuth } from '@firebase/auth';
 import { deleteObject, getDownloadURL, getStorage, list, ref } from '@firebase/storage';
 
+import fave_icon_image from '../assets/favorite.png';
+import outfit_image from '../assets/outfit.png';
+import bin_image from '../assets/bin.png';
+
 export default {
 
     data() {
         return {
             auth: false,
             name: "",
-            emptyCloset: true,
-            editMode: false,
+            emptyCloset: false,
+            editMode: true,
 
         }
     },
@@ -59,6 +67,8 @@ export default {
         const parentFolder: string = `users/${getAuth().currentUser?.email}/`;
         await this.loadClothingItems(getStorage(), parentFolder);
 
+
+
     },
 
     methods: {
@@ -80,7 +90,7 @@ export default {
                 res2.forEach(image_ => {
                     getDownloadURL(image_)
                         .then(image => {
-                            const imgElement = this.createImageElement(image);
+                            const imgElement = this.createImageElement(image, folder.name);
 
                             const imgDivElement = document.createElement('div');
                             imgDivElement.classList.add('closet-custom-loader');
@@ -129,22 +139,84 @@ export default {
             create img element for folder container
         */
 
-        createImageElement(imageUrl: string) {
+        createImageElement(imageUrl: string, folderName: string) {
             const imgElement = document.createElement('img');
 
             imgElement.setAttribute('src', imageUrl);
             imgElement.setAttribute('loading', 'lazy');
             imgElement.setAttribute('visibility', 'hidden')
 
-            imgElement.classList.add('item');
+            imgElement.classList.add('item-alt');
 
             // set image dimensions
             imgElement.style.width = `${window.innerWidth * 0.95}px`;
             imgElement.style.height = `${window.innerWidth * 0.95}px`;
 
-            // add image click event, to delete image in edit mode
-            imgElement.addEventListener('click', async () => {
-                if (this.editMode) {
+
+            // select item
+
+            imgElement.addEventListener('click', () => this.createSelectBar(imageUrl, folderName));
+
+            return imgElement;
+        },
+
+        /*
+            creates a selection bar at the bottom when an image is clicked
+        */
+        createSelectBar(imageUrl: string, folderName: string){
+            const select_bar = document.createElement('div');
+                select_bar.classList.add('select-bar');
+
+                const select_bar_div = document.querySelector('.selected-item') as HTMLDivElement;
+                select_bar_div?.appendChild(select_bar);
+
+                const mini_image = document.createElement('img');
+                mini_image.setAttribute('src', imageUrl);
+                mini_image.style.width = '8vh';
+                mini_image.style.height = '8vh';
+
+                mini_image.style.paddingLeft = '2vh';
+                mini_image.style.paddingTop = '2.5vh';
+
+
+                const pieceCategory = document.createElement('p') as HTMLParagraphElement;
+                pieceCategory.innerText = folderName + ' piece';
+
+                pieceCategory.style.color = 'black';
+                pieceCategory.style.paddingTop = '2vh';
+                pieceCategory.style.maxWidth = '10ch';
+                pieceCategory.style.wordWrap = 'break-word';
+                pieceCategory.style.paddingLeft = '1vh';
+
+
+                const fave_icon = document.createElement('img') as HTMLImageElement;
+                fave_icon.setAttribute('src', fave_icon_image);
+                fave_icon.style.width = '6vh';
+                fave_icon.style.height = '6vh';
+                fave_icon.style.paddingTop = '3.5vh';
+
+                fave_icon.style.position = 'fixed';
+                fave_icon.style.right = '15vh';
+
+                const outfit = document.createElement('img') as HTMLImageElement;
+                outfit.setAttribute('src', outfit_image);
+                outfit.style.width = '6vh';
+                outfit.style.height = '6vh';
+                outfit.style.paddingTop = '3.5vh';
+
+                outfit.style.position = 'fixed';
+                outfit.style.right = '8vh';
+
+                const bin = document.createElement('img') as HTMLImageElement;
+                bin.setAttribute('src', bin_image);
+                bin.style.width = '6vh';
+                bin.style.height = '6vh';
+                bin.style.paddingTop = '3.5vh';
+
+                bin.style.position = 'fixed';
+                bin.style.right = '1vh';
+
+                bin.addEventListener('click', async () => {
                     const deleteConfirmation = window.confirm('Are you sure you want to delete this image');
                     if (deleteConfirmation) {
                         await this.deleteImage(imageUrl);
@@ -154,16 +226,24 @@ export default {
                         closetDiv.innerHTML = '';
 
                         // loads and displays the clothes saved by the user
+                        select_bar_div.innerHTML = '';
                         const parentFolder: string = `users/${getAuth().currentUser?.email}/`;
                         await this.loadClothingItems(getStorage(), parentFolder);
 
 
 
                     }
-                }
+                });
 
-            })
-            return imgElement;
+
+                select_bar.appendChild(mini_image);
+                select_bar.appendChild(pieceCategory);
+                select_bar.appendChild(fave_icon);
+                select_bar.appendChild(outfit);
+                select_bar.appendChild(bin);
+
+                const add_button = document.querySelector('.closet-circle') as HTMLDivElement;
+                add_button.classList.add('closet-circle-alt');
         },
 
         /*
@@ -272,7 +352,6 @@ export default {
     display: flex;
     flex-direction: row;
     margin-top: 5vh;
-    padding-bottom: 5vh;
 
     justify-content: space-between;
 }
@@ -300,6 +379,12 @@ export default {
     right: 0;
 }
 
+.closet-circle-alt {
+    position: fixed;
+    bottom: 13.2vh;
+    right: 0;
+}
+
 .closet-empty {
     display: flex;
     justify-content: center;
@@ -323,6 +408,7 @@ export default {
     display: block;
 }
 
+
 /* image container */
 
 .image-title-container {
@@ -344,6 +430,10 @@ export default {
 .image-container>.item {
     min-width: 100%;
     scroll-snap-align: start;
+}
+
+.folder-container:last-child .item-alt{
+    padding-bottom: 20vh;
 }
 
 /* custom loader */
@@ -381,6 +471,28 @@ export default {
     animation-timing-function: linear
 }
 
+
+/*
+    Selection bar
+*/
+
+
+.select-bar {
+
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    width: 100%;
+    height: 13vh;
+
+    background-color: var(--dark-background-color);
+}
+
+
+/* ------------------------- */
 @keyframes s2 {
     100% {
         transform: rotate(.5turn)

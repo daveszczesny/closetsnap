@@ -6,8 +6,6 @@
 </template>
 
 
-
-
 <style>
 header {
     display: flex;
