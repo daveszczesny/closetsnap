@@ -31,8 +31,12 @@
             </div>
             <div class="login-input">
                 <input type="password" placeholder="password" v-model="password" :style="{
-                        fontSize: password.length > 25 ? 'small' : password.length > 22 ? 'medium' : password.length > 15 ? 'large' : 'x-large',
-                    }">
+                    fontSize: password.length > 25 ? 'small' : password.length > 22 ? 'medium' : password.length > 15 ? 'large' : 'x-large',
+                }">
+            </div>
+
+            <div class="forgot-password-container">
+                <p @click="generatePasswordReset()">Forgot password?</p>
             </div>
         </div>
 
@@ -49,11 +53,10 @@
 
 <script lang="ts">
 
-import { signUp } from '../scripts/auth_signup_password'
-import { signIn } from '../scripts/auth_signin_password'
-import { addUser } from '../scripts/db_add_user';
-import { logOut } from '../scripts/auth_signout'
-import { getAuth, signInWithPopup } from '@firebase/auth';
+import { getAuth } from '@firebase/auth';
+import { generatePasswordResetLink } from '../scripts/auth_reset_password';
+import { signIn } from '../scripts/auth_signin_password';
+import { logOut } from '../scripts/auth_signout';
 
 
 // components
@@ -75,28 +78,35 @@ export default {
 
     methods: {
 
+
+        async generatePasswordReset() {
+            try {
+                await generatePasswordResetLink(this.email);
+                alert("Rest link sent to email: " + this.email );
+            }catch(error){
+                alert("Ensure email is entered correctly");
+                return;
+            }
+        },
+
         login_join_us() {
             //@ts-ignore
             this.$router.push('/CreateAccount');
         },
 
-        signin_email() {
-            // if (this.signInBoolean) {
-            //     // create account
-            //     if (this.email.length > 0 && this.password.length > 0) {
-            //         this.email = this.email.toLowerloginse();
-            //         signUp(this.email, this.password);
-            //         addUser(auth, this.email, this.fname);
-            //     }
-            // } else {
-            // sign in to existing account
+        async signin_email() {
+            const usr: any = await signIn(getAuth(), this.email, this.password);
 
-            const usr = signIn(getAuth(), this.email, this.password);
-            console.log(usr);
+            // Checks if sign in successful and lets user know
+            if (usr instanceof String) {
 
-            // $router isnt recognised by TypeScript
-            //@ts-ignore
-            this.$router.push('/Account')
+                console.error("Login: Email or password incorrect...")
+                alert("Email or password are incorrect, please try again");
+            } else {
+                //@ts-ignore
+                this.$router.push('/Account');
+            }
+
         },
 
         authLogOut() {
@@ -111,6 +121,20 @@ export default {
 
 
 <style>
+.forgot-password-container {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-left: auto;
+    margin-right: 2vh;
+
+}
+
+.forgot-password-container p {
+    color: white;
+
+}
+
 .login-top-headers {
     display: flex;
     margin-top: 4vh;
@@ -192,15 +216,18 @@ export default {
 .login-bottom-section {
     display: flex;
     flex-direction: row;
-
-    margin-top: 20%;
-
     align-items: center;
+
+
+    margin-top: 15vh;
+
 }
 
 .login-bottom-section .login-circle {
+
     margin-left: auto;
     margin-right: 1vh;
+
 }
 
 .login-bottom-section .login-circle img {
@@ -209,8 +236,10 @@ export default {
 }
 
 .login-bottom-section button {
-    margin-right: auto;
+
+
     margin-left: 1vh;
+    margin-right: auto;
 
     background-color: var(--text-box-color);
     font-family: 'Nunito', 'sans-serif';
@@ -218,7 +247,8 @@ export default {
 
     color: black;
 
-    padding: 10px;
+
+    padding: 12px 25px 12px 25px;
     border-radius: 15px;
 
 

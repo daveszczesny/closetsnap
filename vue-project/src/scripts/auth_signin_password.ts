@@ -13,14 +13,16 @@ import { signInWithEmailAndPassword, type Auth} from "firebase/auth";
  * @returns user | error
  */
 
-export function signIn(auth: Auth, email: string, password: string) {
-    signInWithEmailAndPassword(auth, email, password)
+export async function signIn(auth: Auth, email: string, password: string) {
+    await signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
             return userCredential.user;
-            // ...
         })
         .catch((error) => {
+
+            alert("Email or password incorrect. Please try again");
+
             return error.message;
         });
 }
