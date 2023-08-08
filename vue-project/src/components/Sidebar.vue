@@ -16,7 +16,9 @@ header {
     text-indent: 3vh;
     margin-top: 1.6vh;
     color: var(--main-text-color);
-    font-size: 20px;
     font-family: 'Nunito', sans-serif;
 }
+
+
+
 </style>

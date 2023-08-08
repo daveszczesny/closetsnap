@@ -79,10 +79,26 @@ header {
   text-indent: 3vh;
   margin-top: 1.6vh;
   color: var(--main-text-color);
-  font-size: 20px;
   font-family: 'Nunito', sans-serif;
 }
 
+@media only screen and (min-device-width: 32px) and (max-device-width: 480px){
+  .webname {
+    font-size: 20px;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .webname{
+    font-size: 25px;
+  }
+}
+
+@media only screen and (min-device-width: 1025px){
+    .webname{
+        font-size: 25px;
+    }
+}
 
 .menubar {
   margin-top: 0.5vh;

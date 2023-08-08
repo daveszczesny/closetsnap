@@ -15,15 +15,23 @@
         <h1>to Web</h1>
     </div>
 
-    <div class="main-image-container">
-        <img src="../assets/Subject.png" />
-    </div>
+    <div class="home-page-content">
 
-    <div class="small_header">
-        <h1>Unleash the Potential of</h1>
-    </div>
-    <div class="big_header">
-        <h1>Your Style</h1>
+
+        <div class="main-image-container">
+            <img src="../assets/Subject.png" />
+        </div>
+    
+
+        <div class="home-page-text">
+            <span class="home-page-small-header">
+                <h1>Unleash the Potential of</h1>
+            </span>
+            <span class="home-page-large-header">
+                <h1>Your Style</h1>
+            </span>
+        </div>
+
     </div>
 
     <div style="display: flex; justify-content: center; margin-top: 3vh;">
@@ -42,38 +50,220 @@
 
 
 <style>
+/* Mobile devices (portrait and landscape) */
+@media only screen and (min-device-width: 32px) and (max-device-width: 480px) {
+
+
+    h1 {
+        font-size: 43px;
+    }
+
+
+    .home-page-small-header{
+        display: flex;
+        justify-content: center;
+        margin-top: 3vh;
+    }
+
+
+    .home-page-small-header h1{
+        font-size: 30px;
+    }
+
+    .home-page-large-header {
+        display: flex;
+        justify-content: center;
+    }
+
+    .main-image-container img {
+        width: 174px;
+    }
+
+    .top_header {
+        margin-top: 10vh;
+    }
+
+    .h1_float_right {
+        float: right;
+    }
+
+
+    .svg-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 101%;
+        z-index: -1;
+        overflow: hidden;
+    }
+
+    .bg-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-30%, -14%);
+        z-index: -1;
+        width: 120vh;
+        height: 120vh;
+    }
+
+
+    .bg-overlay svg {
+        width: 100%;
+        height: 100%;
+    }
+
+}
+
+/* Ipads and tablets (portrait and landscape) */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px){
+
+
+    h1 {
+        font-size: 60px;
+    }
+
+
+    .big_header {
+        display: flex;
+        justify-content: center;
+    }
+
+
+    .small_header h1 {
+        font-size: 50px;
+    }
+
+
+    .main-image-container{
+        grid-row: 1/3;
+        grid-column: 1/1;
+    }
+
+    .main-image-container img {
+        width: 250px;
+    }
+
+    .top_header {
+        margin-top: 10vh;
+    }
+
+    .top_header h1{
+        margin-left: 5vh;
+    }
+
+    .h1_float_right {
+        float: right;
+        margin-right: 5vh;
+    }
+
+
+    .svg-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 101%;
+        z-index: -1;
+        overflow: hidden;
+    }
+
+    .bg-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-40%, -10%);
+        z-index: -1;
+        width: 200vh;
+        height: 200vh;
+    }
+
+
+    .bg-overlay svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .home-page-content{
+        display: grid;
+
+        grid-gap: 20px;
+
+    }
+
+    .home-page-text{
+        margin-top: 35vh;
+        grid-row: 1/3;
+        grid-column: 2/80;
+
+        margin-left: 10vh;
+    }
+
+    .home-page-small-header{
+        margin: 10px 20px 20px 20px;
+    }
+
+    .home-page-small-header h1{
+        font-size: 30px;
+    }
+
+    .home-page-large-header h1{
+        font-size: 45px;
+        margin-left: 7vh;
+    }
+
+}
+
+/* Desktops and Laptops */
+@media only screen and (min-device-width: 1025px) {
+
+
+h1 {
+    font-size: 60px;
+}
+
+
 .big_header {
     display: flex;
     justify-content: center;
 }
 
-.small_header {
-    margin-top: 3vh;
-    display: flex;
-    justify-content: center;
-}
 
 .small_header h1 {
-    font-size: 30px;
+    font-size: 50px;
+}
+
+
+.main-image-container{
+    grid-row: 1/3;
+    margin-left: 100%;
 }
 
 .main-image-container img {
-    width: 174px;
+    width: 250px;
 }
 
 .top_header {
     margin-top: 10vh;
+    margin-left: 30%;
+
+}
+
+.top_header h1{
+    margin-left: 5vh;
 }
 
 .h1_float_right {
-    float: right;
+    margin-left: 55%;
+    margin-top: 10vh;
 }
 
 
 .svg-container {
-    position:absolute;
-    left:0;
-    top:0;
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 101%;
     z-index: -1;
@@ -83,17 +273,47 @@
 .bg-overlay {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-30%, -14%);
+    left: 30%;
+    transform: translate(-40%, -10%);
     z-index: -1;
-    width: 120vh;
-    height: 120vh;
+    width: 300vh;
+    height: 300vh;
 }
 
 
-.bg-overlay svg{
+.bg-overlay svg {
     width: 100%;
     height: 100%;
+}
+
+.home-page-content{
+    display: grid;
+
+    grid-gap: 20px;
+
+}
+
+.home-page-text{
+    margin-top: 35vh;
+    grid-row: 1/3;
+    grid-column: 12/80;
+
+    margin-left: 10vh;
+}
+
+.home-page-small-header{
+    margin: 10px 20px 20px 20px;
+}
+
+.home-page-small-header h1{
+    font-size: 30px;
+}
+
+.home-page-large-header h1{
+    font-size: 45px;
+    margin-left: 7vh;
+}
+
 }
 
 </style>

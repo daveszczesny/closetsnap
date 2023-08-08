@@ -75,7 +75,6 @@ export default {
 .webname {
     margin: 0;
     color: var(--main-text-color);
-    font-size: 20px;
     font-family: 'Nunito', sans-serif;
 }
 
@@ -120,4 +119,8 @@ export default {
     width: 100%;
     max-width: 200px;
 }
+
+
+
+
 </style>
